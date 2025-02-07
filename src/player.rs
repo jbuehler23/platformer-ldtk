@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::dynamics::Velocity;
 
+use crate::animation::{self, IdleAnimation};
 // use crate::{climbing::Climber, inventory::Inventory};
 use crate::climbing::Climber;
 use crate::{colliders::ColliderBundle, ground_detection::GroundDetection};
@@ -11,7 +12,7 @@ pub struct Player;
 
 #[derive(Clone, Default, Bundle, LdtkEntity)]
 pub struct PlayerBundle {
-    #[sprite_sheet]
+    #[sprite_sheet("char_green_1.png", 56, 56, 8, 1, 0, 0, 0)]
     pub sprite_sheet: Sprite,
     #[from_entity_instance]
     pub collider_bundle: ColliderBundle,
@@ -28,6 +29,8 @@ pub struct PlayerBundle {
     // The whole EntityInstance can be stored directly as an EntityInstance component
     #[from_entity_instance]
     entity_instance: EntityInstance,
+    idle_animation: IdleAnimation,
+
 }
 
 pub fn player_movement(
@@ -65,6 +68,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Update, player_movement)
-            .register_ldtk_entity::<PlayerBundle>("Player");
+            .register_ldtk_entity::<PlayerBundle>("Player")
+            .add_systems(Update, animation::idle_animation);
     }
 }

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
-use bevy_rapier2d::prelude::*;
+use bevy_rapier2d::{prelude::*, rapier::prelude::ColliderBuilder};
 
 #[derive(Clone, Default, Bundle, LdtkIntCell)]
 pub struct ColliderBundle {
@@ -12,6 +12,7 @@ pub struct ColliderBundle {
     pub gravity_scale: GravityScale,
     pub friction: Friction,
     pub density: ColliderMassProperties,
+    pub transform: Transform,
 }
 
 impl From<&EntityInstance> for ColliderBundle {
@@ -20,7 +21,9 @@ impl From<&EntityInstance> for ColliderBundle {
 
         match entity_instance.identifier.as_ref() {
             "Player" => ColliderBundle {
-                collider: Collider::cuboid(28., 28.),
+                collider: Collider::cuboid(10., 28.),
+                // collider: Collider::cuboid(14., 14.),
+                // transform: Transform::from_xyz(-50., 0., 0.).with_scale(Vec3::splat(10.0)),
                 rigid_body: RigidBody::Dynamic,
                 friction: Friction {
                     coefficient: 0.0,

@@ -16,6 +16,7 @@ mod game_flow;
 mod ground_detection;
 // mod inventory;
 // mod misc_objects;
+mod animation;
 mod player;
 mod walls;
 
