@@ -3,6 +3,8 @@ use bevy_ecs_ldtk::prelude::*;
 
 use bevy_rapier2d::{prelude::*, rapier::prelude::ColliderBuilder};
 
+use crate::npc::NPC;
+
 #[derive(Clone, Default, Bundle, LdtkIntCell)]
 pub struct ColliderBundle {
     pub collider: Collider,
@@ -12,26 +14,53 @@ pub struct ColliderBundle {
     pub gravity_scale: GravityScale,
     pub friction: Friction,
     pub density: ColliderMassProperties,
-    pub transform: Transform,
+    pub active_events: ActiveEvents,
+    pub collision_groups: CollisionGroups,
 }
+
+const PLAYER_GROUP: Group = Group::GROUP_1;
+const NPC_GROUP: Group = Group::GROUP_2;
+const WORLD_GROUP: Group = Group::GROUP_3;
+const ENEMY_GROUP: Group = Group::GROUP_4;
+
 
 impl From<&EntityInstance> for ColliderBundle {
     fn from(entity_instance: &EntityInstance) -> ColliderBundle {
         let rotation_constraints = LockedAxes::ROTATION_LOCKED;
 
         match entity_instance.identifier.as_ref() {
-            "Player" => ColliderBundle {
-                collider: Collider::cuboid(10., 28.),
-                // collider: Collider::cuboid(14., 14.),
-                // transform: Transform::from_xyz(-50., 0., 0.).with_scale(Vec3::splat(10.0)),
-                rigid_body: RigidBody::Dynamic,
-                friction: Friction {
-                    coefficient: 0.0,
-                    combine_rule: CoefficientCombineRule::Min,
-                },
-                rotation_constraints,
-                ..Default::default()
+            "Player" => {
+                ColliderBundle {
+                    collider: Collider::cuboid(12., 28.),
+                    rigid_body: RigidBody::Dynamic,
+                    velocity: Velocity::default(),
+                    rotation_constraints,
+                    gravity_scale: GravityScale(1.0),
+                    friction: Friction::new(0.0),
+                    density: ColliderMassProperties::Mass(1.0),
+                    collision_groups: CollisionGroups::new(
+                        PLAYER_GROUP, // Collide with world
+                        Group::ALL ^ NPC_GROUP              // Only affected by world
+                    ),
+                    active_events: ActiveEvents::COLLISION_EVENTS, // Enable collision detection
+                }
             },
+            // "NPC" => {
+            //     ColliderBundle {
+            //         collider: Collider::cuboid(12., 28.),
+            //         rigid_body: RigidBody::Dynamic,
+            //         velocity: Velocity::default(),
+            //         rotation_constraints,
+            //         gravity_scale: GravityScale(1.0),
+            //         friction: Friction::new(0.0),
+            //         density: ColliderMassProperties::Mass(1.0),
+            //         collision_groups: CollisionGroups::new(
+            //             NPC_GROUP | WORLD_GROUP, // Collide with world
+            //             WORLD_GROUP              // Only affected by world
+            //         ),
+            //         active_events: ActiveEvents::COLLISION_EVENTS, // Enable collision detection
+            //     }
+            // }
             "Mob" => ColliderBundle {
                 collider: Collider::cuboid(5., 5.),
                 rigid_body: RigidBody::KinematicVelocityBased,
@@ -75,5 +104,56 @@ impl From<IntGridCell> for SensorBundle {
         } else {
             SensorBundle::default()
         }
+    }
+}
+
+#[derive(Clone, Default, Bundle, LdtkIntCell)]
+pub struct NPCColliderBundle {
+    pub collider: Collider,
+    // pub sensor: Sensor,
+    pub active_events: ActiveEvents,
+    pub rotation_constraints: LockedAxes,
+    pub collision_groups: CollisionGroups,
+    pub rigid_body: RigidBody,
+    pub gravity_sale: GravityScale
+}
+
+impl From<&EntityInstance> for NPCColliderBundle {
+    fn from(entity_instance: &EntityInstance) -> NPCColliderBundle {
+        match entity_instance.identifier.as_ref() {
+        "NPC" => NPCColliderBundle {
+            collider: Collider::cuboid(12., 28.),
+            // sensor: Sensor,
+            rigid_body: RigidBody::Dynamic,
+            gravity_sale: GravityScale(1.0),
+            active_events: ActiveEvents::COLLISION_EVENTS,
+            rotation_constraints: LockedAxes::ROTATION_LOCKED,
+            collision_groups: CollisionGroups::new(
+                WORLD_GROUP,     // NPC collision group
+                WORLD_GROUP,  // Only detect player collisions
+            ),
+        },
+        _ => NPCColliderBundle::default(),
+    }
+    }
+}
+
+// Add this system to spawn sensor children
+pub fn spawn_npc_sensors(
+    mut commands: Commands,
+    query: Query<Entity, Added<NPC>>,
+) {
+    for npc_entity in query.iter() {
+        commands.entity(npc_entity).with_children(|parent| {
+            parent.spawn((
+                Collider::cuboid(20., 30.),  // Slightly larger trigger area
+                Sensor,
+                ActiveEvents::COLLISION_EVENTS,
+                CollisionGroups::new(
+                    NPC_GROUP,    // NPC interaction group
+                    PLAYER_GROUP  // Only detect player collisions
+                ),
+            ));
+        });
     }
 }
