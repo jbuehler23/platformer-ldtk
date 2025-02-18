@@ -7,3 +7,4 @@ edition = "2021"
 bevy = "0.15.1"
 bevy_ecs_ldtk = "0.11.0"
 bevy_rapier2d = "0.28.0"
+bevy-parallax = { git = "https://github.com/Corrosive-Games/bevy-parallax.git", tag = "v0.11.0" }

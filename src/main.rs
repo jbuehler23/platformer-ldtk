@@ -22,6 +22,9 @@ mod player;
 mod walls;
 mod state_machine;
 mod dialogue;
+mod items;
+mod boss;
+mod health;
 
 fn main() {
     App::new()
@@ -53,6 +56,8 @@ fn main() {
         .add_plugins(climbing::ClimbingPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(npc::NPCPlugin)
+        .add_plugins(items::ItemsPlugin)
+        .add_plugins(boss::BossesPlugin)
         // .add_plugins(enemy::EnemyPlugin)
         // .add_systems(Update, inventory::dbg_print_inventory)
         .add_systems(Update, (

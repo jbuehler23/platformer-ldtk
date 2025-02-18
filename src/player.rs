@@ -5,13 +5,14 @@ use bevy_rapier2d::prelude::*;
 use crate::animation::{animate_player_sprite, PlayerAnimation};
 // use crate::{climbing::Climber, inventory::Inventory};
 use crate::climbing::Climber;
+use crate::health::Health;
 use crate::state_machine::{player_state_transition, AttackType, Direction, MovementType, PlayerEvent, PlayerState};
 use crate::{colliders::ColliderBundle, ground_detection::GroundDetection};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default, Component,)]
 pub struct Player;
 
-#[derive(Clone, Default, Bundle, LdtkEntity)]
+#[derive(Default, Bundle, LdtkEntity)]
 pub struct PlayerBundle {
     #[sprite_sheet("char_green_1.png", 56, 56, 8, 8, 0, 0, 0)]
     pub sprite_sheet: Sprite,
@@ -33,6 +34,8 @@ pub struct PlayerBundle {
     #[from_entity_instance]
     entity_instance: EntityInstance,
     animation: PlayerAnimation,
+    #[with(Health::from_field)]
+    pub health: Health
 
 }
 
