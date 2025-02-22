@@ -2,11 +2,13 @@ use bevy::{prelude::*, utils::HashMap};
 
 use crate::{player::Player, state_machine::{AnimationType, PlayerEvent, PlayerState}};
 
-#[derive(Component, Clone, Debug)]pub struct PlayerAnimation {
+#[derive(Component, Clone, Debug)]
+pub struct PlayerAnimation {
     pub timer: Timer,
     frames: HashMap<PlayerState, (usize, usize)>, // (start_frame, num_frames, should_loop)
     current_frame_count: usize,
 }
+
 
 impl Default for PlayerAnimation {
     fn default() -> Self {
@@ -16,6 +18,7 @@ impl Default for PlayerAnimation {
         frames.insert(PlayerState::Attacking, (8, 6)); // Plays once
         frames.insert(PlayerState::Jumping, (24, 9));  // Loops
         frames.insert(PlayerState::Falling, (33, 7));  // Loops
+        frames.insert(PlayerState::Blocking, (80, 3));  // Add blocking animation frames
         
         Self {
             timer: Timer::from_seconds(0.1, TimerMode::Repeating),
@@ -47,17 +50,26 @@ pub fn animate_player_sprite(
                 }
 
                 // Non-looping animations send completion events
-                if matches!(state.get(), PlayerState::Attacking) && 
-                   animation.current_frame_count >= num_frames {
-                    player_events.send(PlayerEvent::AnimationCompleted(
-                        AnimationType::Attacking
-                    ));
+                match state.get() {
+                    PlayerState::Attacking if animation.current_frame_count >= num_frames => {
+                        player_events.send(PlayerEvent::AnimationCompleted(
+                            AnimationType::Attacking
+                        ));
+                    },
+                    PlayerState::Blocking if animation.current_frame_count >= num_frames => {
+                        player_events.send(PlayerEvent::AnimationCompleted(
+                            AnimationType::Blocking
+                        ));
+                    },
+                    _ => {}
                 }
 
                 let next_frame = match state.get() {
-                    PlayerState::Attacking => {
+                    // Non-looping animations
+                    PlayerState::Attacking | PlayerState::Blocking => {
                         start_frame + animation.current_frame_count.min(num_frames - 1)
                     },
+                    // Looping animations
                     _ => start_frame + (animation.current_frame_count % num_frames),
                 };
 
@@ -67,40 +79,3 @@ pub fn animate_player_sprite(
         }
     }
 }
-
-// #[derive(Component, Clone, Debug)]
-// pub struct IdleAnimation {
-//     current_frame: usize,
-//     num_frames: usize,
-//     timer: Timer,
-//     base_index: Option<usize>,
-// }
-
-// impl Default for IdleAnimation {
-//     fn default() -> Self {
-//         Self {
-//             base_index: None,
-//             current_frame: 0,
-//             num_frames: 6,
-//             timer: Timer::from_seconds(
-//                 0.1,
-//                 TimerMode::Repeating,
-//             ),
-//         }
-//     }
-// }
-
-// pub fn idle_animation(
-//     time: Res<Time>,
-//     mut query: Query<(&mut Sprite, &mut IdleAnimation)>,
-// ) {
-//     for (mut sprite, mut idle) in query.iter_mut() {
-//         idle.timer.tick(time.delta());
-        
-//         if idle.timer.just_finished() {
-//             if let Some(atlas) = &mut sprite.texture_atlas {
-//                 atlas.index = (atlas.index + 1) % idle.num_frames;
-//             }
-//         }
-//     }
-// }

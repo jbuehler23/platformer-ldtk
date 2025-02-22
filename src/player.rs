@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+use crate::abilities::Abilities;
 use crate::animation::{animate_player_sprite, PlayerAnimation};
 // use crate::{climbing::Climber, inventory::Inventory};
 use crate::climbing::Climber;
@@ -14,7 +15,7 @@ pub struct Player;
 
 #[derive(Default, Bundle, LdtkEntity)]
 pub struct PlayerBundle {
-    #[sprite_sheet("char_green_1.png", 56, 56, 8, 8, 0, 0, 0)]
+    #[sprite_sheet("char_green_1.png", 56, 56, 11, 11, 0, 0, 0)]
     pub sprite_sheet: Sprite,
     #[from_entity_instance]
     pub collider_bundle: ColliderBundle,
@@ -35,17 +36,18 @@ pub struct PlayerBundle {
     entity_instance: EntityInstance,
     animation: PlayerAnimation,
     #[with(Health::from_field)]
-    pub health: Health
+    pub health: Health,
+    abilities: Abilities,
 
 }
 
 pub fn handle_player_movement_and_input(
-    mut query: Query<(&mut Velocity, &GroundDetection, &mut Climber), With<Player>>,
+    mut query: Query<(&mut Velocity, &GroundDetection, &mut Climber, &Abilities), With<Player>>,
     mut player_events: EventWriter<PlayerEvent>,
     input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
 ) {
-    let Ok((mut velocity, ground_detection, mut climber)) = query.get_single_mut() else { return };
+    let Ok((mut velocity, ground_detection, mut climber, abilities)) = query.get_single_mut() else { return };
     
     // Handle horizontal movement
     let mut direction = 0.0;
@@ -65,6 +67,16 @@ pub fn handle_player_movement_and_input(
     } else if ground_detection.on_ground {
         velocity.linvel.x = 0.;
         player_events.send(PlayerEvent::MovementStarted(MovementType::Idle));
+    }
+
+    // Handle blocking
+    if abilities.can_block() {
+        if input.just_pressed(KeyCode::KeyD) {
+            player_events.send(PlayerEvent::BlockStarted);
+        }
+        if input.just_released(KeyCode::KeyD) {
+            player_events.send(PlayerEvent::BlockEnded);
+        }
     }
 
     // Handle jumping

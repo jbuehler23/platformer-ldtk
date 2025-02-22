@@ -1,4 +1,4 @@
-use crate::player::Player;
+use crate::{interaction::{handle_interaction_input, handle_interaction_prompts}, player::Player};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
@@ -86,6 +86,7 @@ impl Plugin for GameFlowPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup)
             .add_systems(Update, update_level_selection)
-            .add_systems(Update, respawn_world);
+            .add_systems(Update, respawn_world)
+            .add_systems(Update, (handle_interaction_prompts, handle_interaction_input));
     }
 }

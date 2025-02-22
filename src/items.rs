@@ -11,6 +11,7 @@ pub struct Item {
     pub count: u32,
 }
 
+
 #[derive(Debug, Clone, Default, Component, Reflect)]
 pub enum ItemType {
     #[default]

@@ -6,7 +6,7 @@ use crate::{colliders::GolemColliderBundle, dialogue::Dialogue, health::Health, 
 
 #[derive(Default, Bundle, LdtkEntity)]
 pub struct GolemBundle {
-    #[sprite_sheet("golem/golem_boss_sheet.png", 72, 72, 9, 10, 16, 0, 0)]
+    #[sprite_sheet("golem/golem_boss_sheet.png", 99, 99, 10, 10, 0, 0, 0)]
     pub sprite_sheet: Sprite,
     #[from_entity_instance]
     pub collider_bundle: GolemColliderBundle,

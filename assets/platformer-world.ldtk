@@ -774,7 +774,7 @@
 					"canBeNull": true,
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
-					"editorDisplayMode": "NameAndValue",
+					"editorDisplayMode": "EntityTile",
 					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
 					"editorLinkStyle": "StraightArrow",
@@ -1248,12 +1248,12 @@
 			"__bgColor": "#696A79",
 			"bgColor": null,
 			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
+			"bgRelPath": "background_layer_1.png",
+			"bgPos": "Cover",
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#ADADB5",
-			"__bgPos": null,
+			"__bgPos": { "topLeftPx": [0,0], "scale": [2.375,2.375], "cropRect": [0,31.05263157894737,320,117.89473684210526] },
 			"externalRelPath": null,
 			"fieldInstances": [],
 			"layerInstances": [
@@ -1315,7 +1315,7 @@
 							"__grid": [22,8],
 							"__pivot": [0.5,1],
 							"__tags": ["World"],
-							"__tile": { "tilesetUid": 37, "x": 16, "y": 160, "w": 16, "h": 16 },
+							"__tile": { "tilesetUid": 37, "x": 240, "y": 272, "w": 16, "h": 16 },
 							"__smartColor": "#470E00",
 							"iid": "9f901940-c210-11ef-8fc0-03a596055bbd",
 							"width": 24,
@@ -1323,7 +1323,7 @@
 							"defUid": 35,
 							"px": [540,216],
 							"fieldInstances": [
-								{ "__identifier": "type", "__type": "LocalEnum.Item", "__value": "Simple_Shield", "__tile": null, "defUid": 142, "realEditorValues": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Item", "__value": "Simple_Shield", "__tile": { "tilesetUid": 37, "x": 240, "y": 272, "w": 16, "h": 16 }, "defUid": 142, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["Simple_Shield"]
 								}] },
@@ -1496,12 +1496,12 @@
 			"__bgColor": "#696A79",
 			"bgColor": null,
 			"useAutoIdentifier": true,
-			"bgRelPath": null,
-			"bgPos": null,
+			"bgRelPath": "background_layer_1.png",
+			"bgPos": "Cover",
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
 			"__smartColor": "#ADADB5",
-			"__bgPos": null,
+			"__bgPos": { "topLeftPx": [0,0], "scale": [2.088888888888889,2.088888888888889], "cropRect": [6.808510638297889,0,306.3829787234042,180] },
 			"externalRelPath": null,
 			"fieldInstances": [],
 			"layerInstances": [

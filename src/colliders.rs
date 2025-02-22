@@ -201,7 +201,7 @@ impl From<&EntityInstance> for GolemColliderBundle {
     fn from(entity_instance: &EntityInstance) -> GolemColliderBundle {
         match entity_instance.identifier.as_ref() {
             "Golem" => GolemColliderBundle {
-                collider: Collider::cuboid(36., 36.),
+                collider: Collider::cuboid(26., 26.),
                 // sensor: Sensor,
                 rigid_body: RigidBody::KinematicVelocityBased,
                 gravity_sale: GravityScale(1.0),

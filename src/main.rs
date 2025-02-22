@@ -25,6 +25,8 @@ mod dialogue;
 mod items;
 mod boss;
 mod health;
+mod interaction;
+mod abilities;
 
 fn main() {
     App::new()

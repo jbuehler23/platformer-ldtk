@@ -11,6 +11,7 @@ pub enum PlayerState {
     Attacking,
     Jumping,
     Falling,
+    Blocking
 }
 
 #[derive(Event, Debug, Clone)]
@@ -18,6 +19,8 @@ pub enum PlayerEvent {
     MovementStarted(MovementType),
     AttackStarted(AttackType),
     AnimationCompleted(AnimationType),
+    BlockStarted,
+    BlockEnded,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -48,6 +51,7 @@ pub enum AnimationType {
     Jumping,
     Falling,
     Attacking,
+    Blocking
 }
 
 pub fn player_state_transition(
@@ -74,6 +78,12 @@ pub fn player_state_transition(
             PlayerEvent::AnimationCompleted(AnimationType::Attacking) => {
                 next_state.set(PlayerState::Idle);
             },
+            PlayerEvent::BlockStarted => {
+                next_state.set(PlayerState::Blocking);
+            }
+            PlayerEvent::BlockEnded => {
+                next_state.set(PlayerState::Idle);
+            }
             _ => (),
         }
     }
